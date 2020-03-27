@@ -43,7 +43,7 @@ def test(args: 'argparse.Namespace') -> None:
         args.test = cutils.drop_backup_or_hidden_files(args.test)
     # 自分で書き換えた箇所
     f = open('onlinejudge/communication.py', 'r')
-    com_prob = f.read()[0]
+    com_prob = f.read()[7]
     f.close()
     path = com_prob.upper() + '/test'
     args.test = []
@@ -82,13 +82,16 @@ def test(args: 'argparse.Namespace') -> None:
             outlist_b = make_outlist(b)
 
             if len(outlist_a) == len(outlist_b):
+                flg = False
                 for i in range(len(outlist_a)):
                     if outlist_a[i].replace('.', '').isdigit() and outlist_b[i].replace('.', '').isdigit():
+                        flg = True # 小数出力かどうかのフラグ
                         # b が correct だと想定
                         permissible_error = float('1e-6')
                         if not (abs(float(outlist_a[i]) - float(outlist_b[i])) <= permissible_error or abs(float(outlist_a[i]) - float(outlist_b[i])) <= abs(float(outlist_b[i])) * permissible_error):
                             return False
-                return True
+                if flg:
+                    return True
             return False
 
     rstrip_targets = ' \t\r\n\f\v\0'  # ruby's one, follow AnarchyGolf

@@ -157,7 +157,7 @@ def exec_command(command: List[str], timeout: float = None, **kwargs) -> Tuple[b
     try:
         # 自分で書き換えた箇所
         f = open('onlinejudge/communication.py', 'r')
-        com_prob = f.read()[0]
+        com_prob = f.read()[7]
         f.close()
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr, **kwargs, cwd=r''+com_prob.upper())
     except FileNotFoundError:
