@@ -3,15 +3,17 @@ import sys
 import os
 import subprocess
 
-contest_name = 'abc159'
-contest_url = 'https://atcoder.jp/contests/' + contest_name + '/tasks/' + contest_name
+contest_name = 'abc159' # 暫定
 
 if __name__ == '__main__':
     args = [] + sys.argv[1:]
 
     # 初期化
     if 'start' in args:
-        contest_name = input('contest name: ').lower()
+        contest_name = input('contest name: ').upper()
+        f = open('onlinejudge/communication.py', 'w')
+        f.writelines([contest_name, ' '])
+        f.close()
         for c in ['A', 'B', 'C', 'D', 'E', 'F']:
             if os.path.exists(c + '/test'):
                 subprocess.run(['rm', '-rf', c + '/test'])
@@ -38,8 +40,12 @@ if __name__ == '__main__':
             args = ['t', '-c', 'python', com_prob.lower() + '.py']
             break
 
+    f = open('onlinejudge/communication.py', 'r')
+    contest_name = f.read()[:6]
+    f.close()
+    contest_url = 'https://atcoder.jp/contests/' + contest_name.lower() + '/tasks/' + contest_name.lower()
     f = open('onlinejudge/communication.py', 'w')
-    f.writelines([com_prob, ' ', com_lang])
+    f.writelines([contest_name, ' ', com_prob, ' ', com_lang])
     f.close()
 
     # サンプルケース取得
