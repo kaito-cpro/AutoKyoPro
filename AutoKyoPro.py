@@ -9,6 +9,16 @@ contest_url = 'https://atcoder.jp/contests/' + contest_name + '/tasks/' + contes
 if __name__ == '__main__':
     args = [] + sys.argv[1:]
 
+    # 初期化
+    if 'start' in args:
+        contest_name = input('contest name: ').lower()
+        for c in ['A', 'B', 'C', 'D', 'E', 'F']:
+            if os.path.exists(c + '/test'):
+                subprocess.run(['rm', '-rf', c + '/test'])
+            if os.path.exists(c + '/a.exe'):
+                subprocess.run(['rm', c + '/a.exe'])
+        sys.exit()
+
     # ログイン
     if 'login' in args:
         # if len(args) != 1:
@@ -38,7 +48,9 @@ if __name__ == '__main__':
 
     # サンプルケーステスト
     if com_lang == 'C++':
-        subprocess.run(['g++', com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
+        p = subprocess.run(['g++', com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
+        if p.returncode != 0:
+            sys.exit()
         subprocess.run(['mv', 'a.exe', com_prob.upper()])
         onlinejudge.implementation.main.main(args=['t'])
     elif com_lang == 'Python3':
