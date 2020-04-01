@@ -41,7 +41,7 @@ if __name__ == '__main__':
             break
 
     f = open('onlinejudge/communication.py', 'r')
-    contest_name = f.read()[:6]
+    contest_name = f.read().split()[0]
     f.close()
     contest_url = 'https://atcoder.jp/contests/' + contest_name.lower() + '/tasks/' + contest_name.lower()
     f = open('onlinejudge/communication.py', 'w')
@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     # 提出
     f = open('onlinejudge/communication.py', 'r')
-    AC_or_WA = f.read()[-2:]
+    AC_or_WA = f.read().split()[-1]
     f.close()
     if AC_or_WA == 'AC':
         if com_lang == 'C++':
