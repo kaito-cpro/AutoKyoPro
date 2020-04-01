@@ -1,4 +1,5 @@
 import onlinejudge.implementation.main
+import onlinejudge.implementation.logging as log
 import sys
 import os
 import subprocess
@@ -23,12 +24,14 @@ if __name__ == '__main__':
 
     # ログイン
     if 'login' in args:
-        # if len(args) != 1:
-            # log.error('failed to login to AtCoder')
-            # log.info('please type just \'login\' as an option')
+        if len(args) != 1:
+            log.error('failed to login to AtCoder')
+            log.warning('please type just \'login\' as an option')
+            sys.exit()
         onlinejudge.implementation.main.main(args=['login', 'https://atcoder.jp/'])
         sys.exit()
 
+    com_prob, com_lang = None, None
     for cmd in args:
         if '.cpp' in cmd:
             com_prob = cmd[0].upper()
@@ -39,6 +42,10 @@ if __name__ == '__main__':
             com_lang = 'Python3'
             args = ['t', '-c', 'python', com_prob.lower() + '.py']
             break
+    if com_prob == None:
+        log.error('failed to develop the process')
+        log.warning('please type valid file name')
+        sys.exit()
 
     f = open('onlinejudge/communication.py', 'r')
     contest_name = f.read().split()[0]
