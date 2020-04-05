@@ -284,6 +284,9 @@ def guess_lang_ids_of_file(filename: pathlib.Path, code: bytes, language_dict, c
             for version in versions:
                 lang_ids += select('python%d'  % version, saved_ids)
                 lang_ids += select('python %d' % version, saved_ids)
+                # 自分で書き換えた箇所(AtCoder の judge で言語がアップデートされたら追加する)
+                lang_ids += select('python(%d' % version, saved_ids)
+                lang_ids += select('python (%d' % version, saved_ids)
 
         lang_ids = list(set(lang_ids))
         return lang_ids
