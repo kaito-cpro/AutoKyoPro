@@ -50,7 +50,7 @@ if __name__ == '__main__':
     f = open('onlinejudge/communication.py', 'r')
     contest_name = f.read().split()[0]
     f.close()
-    contest_url = 'https://atcoder.jp/contests/' + contest_name.lower() + '/tasks/' + contest_name.lower()
+    contest_url = 'https://atcoder.jp/contests/' + contest_name.lower() + '/tasks/' + (contest_name.lower().replace('-', '_') if '-' in contest_name.lower() else contest_name.lower())
     f = open('onlinejudge/communication.py', 'w')
     f.writelines([contest_name, ' ', com_prob, ' ', com_lang])
     f.close()
