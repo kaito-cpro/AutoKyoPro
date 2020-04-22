@@ -52,6 +52,24 @@ def submit(args: 'argparse.Namespace') -> None:
     except UnicodeDecodeError as e:
         log.failure('%s: %s', e.__class__.__name__, str(e))
         s = repr(code)[ 1 : ]
+    # 自分で書き換えた箇所(デバッグ関数のコメント化)
+    idx_EOD = s.find("// End of Debug parts")
+    while 0 <= idx_EOD < len(s):
+        idx_DUMP = s[idx_EOD:].find("DUMP")
+        if idx_DUMP == -1:
+            break
+        idx_DUMP += idx_EOD
+        idx_EOD = idx_DUMP + 4
+        while idx_EOD < len(s):
+            if s[idx_EOD] == " ":
+                idx_EOD += 1
+            else:
+                break
+        if idx_EOD == len(s) or s[idx_EOD] != "(":
+            break
+        s = s[:idx_DUMP] + "// " + s[idx_DUMP:]
+        idx_EOD = idx_DUMP + 7
+    code = s.encode()
     log.info('code (%d byte):', len(code))
     lines = s.splitlines(keepends=True)
     if len(lines) < 30:
