@@ -24,9 +24,11 @@ def login(args: 'argparse.Namespace') -> None:
             sys.exit(1)
         kwargs['method'] = args.method
     else:
-        if args.method:
-            log.failure('login for %s: invalid option: --method %s', service.get_name(), args.method)
-            sys.exit(1)
+        # 自分で書き換えた箇所
+        pass
+        # if args.method:
+            # log.failure('login for %s: invalid option: --method %s', service.get_name(), args.method)
+            # sys.exit(1)
 
     # login
     def get_credentials() -> Tuple[str, str]:
