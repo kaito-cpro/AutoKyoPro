@@ -72,7 +72,7 @@ if __name__ == '__main__':
     f.close()
 
     # サンプルケース取得
-    if not os.path.exists(com_prob + '/test'):
+    if not os.path.exists(com_prob.upper() + '/test'):
         onlinejudge.implementation.main.main(args=['d', contest_url + '_' + com_prob.lower(), '-d', com_prob.upper() + '/test'])
 
     # サンプルケーステスト
@@ -80,6 +80,8 @@ if __name__ == '__main__':
         p = subprocess.run(['g++', com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
         if p.returncode != 0:
             sys.exit()
+        if os.path.exists(com_prob.upper() + '/a.exe'):
+            subprocess.run(['rm', com_prob.upper() + '/a.exe'])
         subprocess.run(['mv', 'a.exe', com_prob.upper()])
         onlinejudge.implementation.main.main(args=['t'])
     elif com_lang == 'Python3':
