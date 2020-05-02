@@ -3,6 +3,7 @@ import onlinejudge.implementation.logging as log
 import sys
 import os
 import subprocess
+import datetime
 
 contest_name = 'abc159' # 暫定
 
@@ -20,6 +21,16 @@ if __name__ == '__main__':
                 subprocess.run(['rm', '-rf', c + '/test'])
             if os.path.exists(c + '/a.exe'):
                 subprocess.run(['rm', c + '/a.exe'])
+        sys.exit()
+
+    # コンテスト参加スタンバイ
+    if 'standby' in args:
+        f = open('onlinejudge/communication.py', 'r')
+        contest_name = f.read().split()[0]
+        f.close()
+        contest_url = 'https://atcoder.jp/contests/' + contest_name.lower() + '/tasks/' + (contest_name.lower().replace('-', '_') if '-' in contest_name.lower() else contest_name.lower())
+        contest_time = '21:00:00'
+        onlinejudge.implementation.main.main(args=['standby', contest_url, contest_time])
         sys.exit()
 
     # ログイン

@@ -6,6 +6,7 @@ import onlinejudge.implementation.utils as utils
 import onlinejudge.implementation.logging as log
 from onlinejudge.implementation.command.download import download
 from onlinejudge.implementation.command.login import login
+from onlinejudge.implementation.command.standby import standby
 from onlinejudge.implementation.command.submit import submit
 from onlinejudge.implementation.command.generate_scanner import generate_scanner
 from onlinejudge.implementation.command.test import test
@@ -89,6 +90,19 @@ supported services:
     subparser.add_argument('-p', '--password')
     subparser.add_argument('--check', action='store_true', help='check whether you are logged in or not')
     subparser.add_argument('--use-browser', choices=('always', 'auto', 'never'), default='auto', help='specify whether it uses a GUI web browser to login or not  (default: auto)')
+
+    # 自分で書き換えた箇所
+    # standby
+    subparser = subparsers.add_parser('standby', help='standby before the contest', formatter_class=argparse.RawTextHelpFormatter, epilog='''\
+supported services:
+  AtCoder
+  Codeforces
+  yukicoder
+  HackerRank
+  Toph
+''')
+    subparser.add_argument('url')
+    subparser.add_argument('contest_time')
 
     # submit
     subparser = subparsers.add_parser('submit', aliases=['s'], help='submit your solution', formatter_class=argparse.RawTextHelpFormatter, epilog='''\
@@ -206,11 +220,12 @@ def run_program(args: argparse.Namespace, parser: argparse.ArgumentParser) -> No
         log.setLevel(log.logging.DEBUG)
     log.debug('args: %s', str(args))
 
-
     if args.subcommand in ['download', 'd', 'dl']:
         download(args)
     elif args.subcommand in ['login', 'l']:
         login(args)
+    elif args.subcommand in ['standby']:
+        standby(args)
     elif args.subcommand in ['submit', 's']:
         submit(args)
     elif args.subcommand in ['test', 't']:
