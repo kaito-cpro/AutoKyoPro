@@ -53,6 +53,11 @@ if __name__ == '__main__':
             com_lang = 'Python3'
             args = ['t', '-c', 'python', com_prob.lower() + '.py']
             break
+        elif '.awk' in cmd:
+            com_prob = cmd[0].upper()
+            com_lang = 'Awk'
+            args = ['t', '-c', 'awk', '-f', com_prob.lower() + '.py']
+            break
     if com_prob == None:
         log.error('failed to develop the process')
         log.warning('please type valid file name')
@@ -79,6 +84,8 @@ if __name__ == '__main__':
         onlinejudge.implementation.main.main(args=['t'])
     elif com_lang == 'Python3':
         onlinejudge.implementation.main.main(args=['t', '-c', 'python ' + com_prob.lower() + '.py'])
+    elif com_lang == 'Awk':
+        onlinejudge.implementation.main.main(args=['t', '-c', 'awk -f ' + com_prob.lower() + '.awk'])
 
     # 提出
     f = open('onlinejudge/communication.py', 'r')
@@ -89,3 +96,5 @@ if __name__ == '__main__':
             onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
         elif com_lang == 'Python3':
             onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.py'])
+        elif com_lang == 'Awk':
+            onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.awk'])
