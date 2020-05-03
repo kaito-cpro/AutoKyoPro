@@ -29,7 +29,11 @@ if __name__ == '__main__':
         contest_name = f.read().split()[0]
         f.close()
         contest_url = 'https://atcoder.jp/contests/' + contest_name.lower() + '/tasks/' + (contest_name.lower().replace('-', '_') if '-' in contest_name.lower() else contest_name.lower())
-        contest_time = '21:00:00'
+        contest_time = input('contest time: ') + ':00'
+        if len(contest_time) != 8 or contest_time[2] != ':':
+            log.error('failed to set the contest time')
+            log.warning('please type the valid time in the form such as 21:00')
+            sys.exit()
         onlinejudge.implementation.main.main(args=['standby', contest_url, contest_time])
         sys.exit()
 

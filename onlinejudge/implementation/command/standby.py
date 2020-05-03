@@ -14,6 +14,7 @@ default_url_opener = [ 'sensible-browser', 'xdg-open', 'open' ]
 
 def standby(args: 'argparse.Namespace') -> None:
     # open problem A
+    log.info('contest starts at ' + args.contest_time)
     log.info('now waiting...')
     while True:
         if str(datetime.datetime.now().strftime('%X')) >= args.contest_time:
