@@ -99,15 +99,22 @@ class AtCoderProblem(onlinejudge.type.Problem):
     def download_sample_cases(self, session: Optional[requests.Session] = None) -> List[onlinejudge.type.TestCase]:
         session = session or utils.new_default_session()
         # get
-        resp = _request('GET', self.get_url(), session=session)
-        msgs = AtCoderService._get_messages_from_cookie(resp.cookies)
-        if AtCoderService._report_messages(msgs, unexpected=True):
-            # example message: "message: You cannot see this page."
-            log.warning('are you logged in?')
-            return []
-        # parse
-        soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
-        samples = utils.SampleZipper()
+        # 自分で書き換えた箇所(初期 AtCoder の問題 URl は末尾が数字になっているため)
+        url = self.get_url()
+        for _ in range(2):
+            resp = _request('GET', url, session=session)
+            msgs = AtCoderService._get_messages_from_cookie(resp.cookies)
+            if AtCoderService._report_messages(msgs, unexpected=True):
+                # example message: "message: You cannot see this page."
+                log.warning('are you logged in?')
+                return []
+            # parse
+            soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
+            samples = utils.SampleZipper()
+            if len(list(self._find_sample_tags(soup))) > 0:
+                break
+            else:
+                url = url[:-1] + chr(ord(url[-1]) - ord('a') + ord('1'))
         lang = None
         for pre, h3 in self._find_sample_tags(soup):
             s = utils.textfile(utils.dos2unix(pre.string.lstrip()))
@@ -279,13 +286,20 @@ class AtCoderProblem(onlinejudge.type.Problem):
         if self._task_id is None:
             session = session or utils.new_default_session()
             # get
-            resp = _request('GET', self.get_url(), session=session)
-            msgs = AtCoderService._get_messages_from_cookie(resp.cookies)
-            if AtCoderService._report_messages(msgs, unexpected=True):
-                raise SubmissionError
-            # parse
-            soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
-            submit = soup.find('a', href=re.compile(r'^/submit\?task_id='))
+            # 自分で書き換えた箇所(初期 AtCoder の問題 URl は末尾が数字になっているため)
+            url = self.get_url()
+            for _ in range(2):
+                resp = _request('GET', url,  session=session)
+                msgs = AtCoderService._get_messages_from_cookie(resp.cookies)
+                if AtCoderService._report_messages(msgs, unexpected=True):
+                    raise SubmissionError
+                # parse
+                soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
+                submit = soup.find('a', href=re.compile(r'^/submit\?task_id='))
+                if submit:
+                    break
+                else:
+                    url = url[:-1] + chr(ord(url[-1]) - ord('a') + ord('1'))
             if not submit:
                 log.error('link to submit not found')
                 raise SubmissionError
