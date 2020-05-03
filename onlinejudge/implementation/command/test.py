@@ -197,14 +197,20 @@ def test(args: 'argparse.Namespace') -> None:
     if ac_count == len(tests):
         log.success('test ' + log.green('success') + ': %d cases', len(tests))
         # 自分で書き換えた箇所
-        f = open('onlinejudge/communication.py', 'a')
-        f.writelines([' ', 'AC'])
+        f = open('onlinejudge/communication.py', 'r')
+        com_prev = f.readlines()
+        f.close()
+        f = open('onlinejudge/communication.py', 'w')
+        f.writelines([' '.join(com_prev[0].split())] + [' ', 'AC', '\n'] + com_prev[1].split())
         f.close()
     else:
         log.failure('test ' + log.red('failed') + ': %d AC / %d cases', ac_count, len(tests))
         # 自分で書き換えた箇所
-        f = open('onlinejudge/communication.py', 'a')
-        f.writelines([' ', 'WA'])
+        f = open('onlinejudge/communication.py', 'r')
+        com_prev = f.readlines()
+        f.close()
+        f = open('onlinejudge/communication.py', 'w')
+        f.writelines([' '.join(com_prev[0].split())] + [' ', 'WA', '\n'] + com_prev[1].split())
         f.close()
 
     if args.json:
