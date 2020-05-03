@@ -15,7 +15,7 @@ if __name__ == '__main__':
         contest_name = input('contest name: ').upper()
         alternate_url = input('alternate contest url(default: Enter): ')
         if alternate_url == '':
-            com_url = contest_name.lower()
+            alternate_url = contest_name.lower()
         f = open('onlinejudge/communication.py', 'w')
         f.writelines([contest_name, '\n', alternate_url])
         f.close()
