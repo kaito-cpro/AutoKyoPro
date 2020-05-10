@@ -53,7 +53,17 @@ def submit(args: 'argparse.Namespace') -> None:
         log.failure('%s: %s', e.__class__.__name__, str(e))
         s = repr(code)[ 1 : ]
     # 自分で書き換えた箇所(デバッグ関数のコメント化)
-    idx_EOD = s.find("// End of Debug parts")
+    idx_BOD = s.find("class Debug {")
+    idx_EOD = s.find("// End of Debug parts") + 30
+    # -----------------------------------------------------------
+    # マクロを削除する部分
+    while s[idx_EOD] == '-':
+        idx_EOD += 1
+    while s[idx_EOD] == ' ' or s[idx_EOD] == '\n':
+        idx_EOD += 1
+    s = s[:idx_BOD] + s[idx_EOD:]
+    idx_EOD = idx_BOD
+    # -----------------------------------------------------------
     while 0 <= idx_EOD < len(s):
         idx_DUMP = s[idx_EOD:].find("DUMP")
         if idx_DUMP == -1:
