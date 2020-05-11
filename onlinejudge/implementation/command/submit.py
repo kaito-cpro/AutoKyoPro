@@ -63,8 +63,8 @@ def submit(args: 'argparse.Namespace') -> None:
         while idx_EOD < len(s) and (s[idx_EOD] == ' ' or s[idx_EOD] == '\n'):
             idx_EOD += 1
         s = s[:idx_BOD] + s[idx_EOD:]
-        idx_EOD = idx_BOD
         # -----------------------------------------------------------
+        idx_EOD = idx_BOD
         while 0 <= idx_EOD < len(s):
             idx_DUMP = s[idx_EOD:].find("DUMP")
             if idx_DUMP == -1:
@@ -80,6 +80,14 @@ def submit(args: 'argparse.Namespace') -> None:
                 break
             s = s[:idx_DUMP] + "// " + s[idx_DUMP:]
             idx_EOD = idx_DUMP + 7
+        idx_EOD = idx_BOD
+        while 0 <= idx_EOD < len(s):
+            idx_Debug = s[idx_EOD:].find("Debug::")
+            if idx_Debug == -1:
+                break
+            idx_Debug += idx_EOD
+            s = s[:idx_Debug] + "// " + s[idx_Debug:]
+            idx_EOD = idx_Debug + 10
     code = s.encode()
     log.info('code (%d byte):', len(code))
     lines = s.splitlines(keepends=True)
