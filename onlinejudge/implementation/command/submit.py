@@ -54,12 +54,12 @@ def submit(args: 'argparse.Namespace') -> None:
         s = repr(code)[ 1 : ]
     # 自分で書き換えた箇所(デバッグ関数のコメント化)
     idx_BOD = s.find("class Debug {")
-    idx_EOD = s.find("// End of Debug parts") + 30
+    idx_EOD = min(s.find("// End of Debug parts") + 30, len(s))
     # -----------------------------------------------------------
     # マクロを削除する部分
-    while s[idx_EOD] == '-':
+    while idx_EOD < len(s) and s[idx_EOD] == '-':
         idx_EOD += 1
-    while s[idx_EOD] == ' ' or s[idx_EOD] == '\n':
+    while idx_EOD < len(s) and (s[idx_EOD] == ' ' or s[idx_EOD] == '\n'):
         idx_EOD += 1
     s = s[:idx_BOD] + s[idx_EOD:]
     idx_EOD = idx_BOD
