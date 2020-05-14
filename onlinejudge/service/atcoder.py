@@ -27,7 +27,9 @@ class AtCoderService(onlinejudge.type.Service):
 
     def login(self, get_credentials: onlinejudge.type.CredentialsProvider, session: Optional[requests.Session] = None) -> bool:
         session = session or utils.new_default_session()
-        url = 'https://practice.contest.atcoder.jp/login'
+        # 自分で書き換えた箇所
+        # url = 'https://practice.contest.atcoder.jp/login'
+        url = 'https://atcoder.jp/login'
         # get
         resp = _request('GET', url, session=session, allow_redirects=False)
         msgs = AtCoderService._get_messages_from_cookie(resp.cookies)
@@ -37,7 +39,10 @@ class AtCoderService(onlinejudge.type.Service):
             return 'login' not in resp.url
         # post
         username, password = get_credentials()
-        resp = _request('POST', url, session=session, data={ 'name': username, 'password': password }, allow_redirects=False)
+        # 自分で書き換えた箇所(CSRF対策)
+        soup = bs4.BeautifulSoup(resp.text, 'lxml')
+        csrftoken = soup.find_all('input')[0]['value']
+        resp = _request('POST', url, session=session, data={ 'csrf_token': csrftoken, 'username': username, 'password': password }, allow_redirects=False)
         msgs = AtCoderService._get_messages_from_cookie(resp.cookies)
         AtCoderService._report_messages(msgs)
         return 'login' not in resp.url  # AtCoder redirects to the top page if success
@@ -232,9 +237,12 @@ class AtCoderProblem(onlinejudge.type.Problem):
             return {}
         # parse
         soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
-        select = soup.find('select', class_='submit-language-selector')  # NOTE: AtCoder can vary languages depending on tasks, even in one contest. here, ignores this fact.
+        # 自分で書き換えた箇所
+        select = soup.find_all('select')[1]  # NOTE: AtCoder can vary languages depending on tasks, even in one contest. here, ignores this fact.
         language_dict = {}
         for option in select.find_all('option'):
+            if 'value' not in option.attrs:
+                continue
             language_dict[option.attrs['value']] = { 'description': option.string }
         return language_dict
 
@@ -254,7 +262,7 @@ class AtCoderProblem(onlinejudge.type.Problem):
             raise SubmissionError
         # parse
         soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
-        form = soup.find('form', action=re.compile(r'^/submit\?task_id='))
+        form = soup.find('form', action=re.compile(r'/submit'))  # 自分で書き換えた箇所
         if not form:
             log.error('form not found')
             raise SubmissionError
@@ -262,9 +270,9 @@ class AtCoderProblem(onlinejudge.type.Problem):
         # post
         task_id = self._get_task_id(session=session)
         form = utils.FormSender(form, url=resp.url)
-        form.set('task_id', str(task_id))
-        form.set('source_code', code)
-        form.set('language_id_{}'.format(task_id), language)
+        form.set('data.TaskScreenName', str(task_id))
+        form.set('sourceCode', code)
+        form.set('data.LanguageId'.format(task_id), language)
         resp = form.request(session=session)
         resp.raise_for_status()
         # result
@@ -295,17 +303,19 @@ class AtCoderProblem(onlinejudge.type.Problem):
                     raise SubmissionError
                 # parse
                 soup = bs4.BeautifulSoup(resp.content.decode(resp.encoding), utils.html_parser)
-                submit = soup.find('a', href=re.compile(r'^/submit\?task_id='))
-                if submit:
+                submit = soup.find('a', href=re.compile(r'submit\?taskScreenName='))
+                if submit != None:
                     break
                 else:
                     url = url[:-1] + chr(ord(url[-1]) - ord('a') + ord('1'))
             if not submit:
                 log.error('link to submit not found')
                 raise SubmissionError
-            m = re.match(r'^/submit\?task_id=([0-9]+)$', submit.attrs['href'])
+            # 自分で書き換えた箇所
+            regex = re.compile(r'(.+)/submit\?taskScreenName=(.+)$')
+            m = regex.search(submit.attrs['href'])
             assert m
-            self._task_id = int(m.group(1))
+            self._task_id = m.group(2)
         return self._task_id
 
 class AtCoderSubmission(onlinejudge.type.Submission):
