@@ -13,13 +13,26 @@ if __name__ == '__main__':
     # 初期化
     if 'start' in args:
         contest_name = input('contest name: ').upper()
-        alternate_url = input('alternate contest url(default: Enter): ')
+        alternate_url = input('alternate contest url (default: Enter): ')
         if alternate_url == '':
             alternate_url = contest_name.lower()
         f = open('onlinejudge/communication.py', 'w')
         f.writelines([contest_name, '\n', alternate_url])
         f.close()
-        for c in ['A', 'B', 'C', 'D', 'E', 'F']:
+        problem_num = input('number of problems (default: F): ')
+        if problem_num == '':
+            problem_num = 'F'
+        problem_list = [chr(num) for num in range(ord('A'), ord(problem_num.upper()) + 1)]
+        for c in [chr(num) for num in range(ord('A'), ord('Z') + 1)]:
+            if c not in problem_list and os.path.exists(c):
+                subprocess.run(['rm', '-rf', c])
+        for c in problem_list:
+            if os.path.exists(c):
+                continue
+            subprocess.run(['mkdir', c])
+            subprocess.run(['touch', c + '/' + c.lower() + '.cpp'])
+            subprocess.run(['touch', c + '/' + c.lower() + '.py'])
+        for c in problem_list:
             if os.path.exists(c + '/test'):
                 subprocess.run(['rm', '-rf', c + '/test'])
             if os.path.exists(c + '/a.exe'):
