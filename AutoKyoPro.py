@@ -112,13 +112,14 @@ if __name__ == '__main__':
         onlinejudge.implementation.main.main(args=['t', '-c', 'awk -f ' + com_prob.lower() + '.awk'])
 
     # 提出
-    f = open('onlinejudge/communication.py', 'r')
-    AC_or_WA = f.readline().split()[3]
-    f.close()
-    if AC_or_WA == 'AC':
-        if com_lang == 'C++':
-            onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
-        elif com_lang == 'Python3':
-            onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.py'])
-        elif com_lang == 'Awk':
-            onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.awk'])
+    if 'nosub' not in args:
+        f = open('onlinejudge/communication.py', 'r')
+        AC_or_WA = f.readline().split()[3]
+        f.close()
+        if AC_or_WA == 'AC':
+            if com_lang == 'C++':
+                onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
+            elif com_lang == 'Python3':
+                onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.py'])
+            elif com_lang == 'Awk':
+                onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.awk'])
