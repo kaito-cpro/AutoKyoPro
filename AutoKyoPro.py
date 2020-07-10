@@ -72,12 +72,10 @@ if __name__ == '__main__':
         elif '.py' in cmd:
             com_prob = cmd[0].upper()
             com_lang = 'Python3'
-            args = ['t', '-c', 'python', com_prob.lower() + '.py']
             break
         elif '.awk' in cmd:
             com_prob = cmd[0].upper()
             com_lang = 'Awk'
-            args = ['t', '-c', 'awk', '-f', com_prob.lower() + '.py']
             break
     if com_prob == None:
         log.error('failed to develop the process')
