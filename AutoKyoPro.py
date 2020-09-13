@@ -11,7 +11,7 @@ if __name__ == '__main__':
     args = [] + sys.argv[1:]
 
     # 初期化
-    if 'start' in args:
+    if 'init' in args:
         contest_name = input('contest name: ').upper()
         alternate_url = input('alternate contest url (default: Enter): ')
         if alternate_url == '':
