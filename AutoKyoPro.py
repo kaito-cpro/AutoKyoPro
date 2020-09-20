@@ -97,6 +97,7 @@ if __name__ == '__main__':
 
     # サンプルケーステスト
     if com_lang == 'C++':
+        # C++ with ACL も含む
         p = subprocess.run(['g++', com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
         if p.returncode != 0:
             sys.exit()

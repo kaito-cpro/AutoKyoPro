@@ -90,19 +90,20 @@ def submit(args: 'argparse.Namespace') -> None:
             idx_EOD = idx_Debug + 10
     code = s.encode()
     log.info('code (%d byte):', len(code))
-    lines = s.splitlines(keepends=True)
-    if len(lines) < 30:
-        log.emit(log.bold(s))
-    else:
-        log.emit(log.bold(''.join(lines[: 10])))
-        log.emit('... (%s lines) ...', len(lines[10 : -10]))
-        log.emit(log.bold(''.join(lines[-10 :])))
+    # 自分で書き換えた箇所(ソースコード表示を消した)
+    # lines = s.splitlines(keepends=True)
+    # if len(lines) < 30:
+        # log.emit(log.bold(s))
+    # else:
+        # log.emit(log.bold(''.join(lines[: 10])))
+        # log.emit('... (%s lines) ...', len(lines[10 : -10]))
+        # log.emit(log.bold(''.join(lines[-10 :])))
 
 
     with utils.with_cookiejar(utils.new_default_session(), path=args.cookie) as sess:
         # guess or select language ids
         langs = problem.get_language_dict(session=sess)
-        print('langs(submit68):', langs)
+        # print('langs(submit68):', langs)  # 言語コード一覧表示
         matched_lang_ids = None  # type: Optional[List[str]]
         if args.language in langs:
             matched_lang_ids = [ args.language ]
@@ -277,6 +278,13 @@ def guess_lang_ids_of_file(filename: pathlib.Path, code: bytes, language_dict, c
                 lang_ids += [ ids[-1] ]  # since C++11 < C++1y < ... as strings
             lang_ids = list(set(lang_ids))
         log.debug('lang ids after version filter: %s', lang_ids)
+
+        # 自分で書き換えた箇所
+        # AC-Library の include を必要とするか
+        s = code.decode()
+        m = re.search(r'#.*include.*<.*atcoder', s)
+        if m:
+            lang_ids = list(['4101'])  # C++ with ACL
 
         assert lang_ids
         return lang_ids
