@@ -39,6 +39,14 @@ if __name__ == '__main__':
                 subprocess.run(['rm', c + '/a.exe'])
         sys.exit()
 
+    # AutoKyoPro に登録したコンテスト情報の表示
+    if 'info' in args:
+        f = open('onlinejudge/communication.py', 'r')
+        info = f.read()
+        f.close()
+        print(info)
+        sys.exit()
+
     # コンテスト参加スタンバイ
     if 'standby' in args:
         f = open('onlinejudge/communication.py', 'r')
