@@ -19,9 +19,13 @@ if __name__ == '__main__':
         f = open('onlinejudge/communication.py', 'w')
         f.writelines([contest_name, '\n', alternate_url])
         f.close()
-        problem_num = input('number of problems (default: F): ')
+        problem_num = input('number of problems (default F: Enter): ')
         if problem_num == '':
             problem_num = 'F'
+        if not 'A' <= problem_num <= 'Z':
+            log.error('failed to set the number of problems')
+            log.warning('please type the valid alphabet from \'A\' to \'Z\'')
+            sys.exit()
         problem_list = [chr(num) for num in range(ord('A'), ord(problem_num.upper()) + 1)]
         for c in [chr(num) for num in range(ord('A'), ord('Z') + 1)]:
             if c not in problem_list and os.path.exists(c):
@@ -54,7 +58,10 @@ if __name__ == '__main__':
         com_url = f.readline().split()[0]
         f.close()
         contest_url = 'https://atcoder.jp/contests/' + contest_name.lower() + '/tasks/' + (com_url.lower().replace('-', '_') if '-' in com_url.lower() else com_url.lower())
-        contest_time = input('contest time: ') + ':00'
+        contest_time = input('contest time (default 21:00: Enter): ')
+        if contest_time == '':
+            contest_time = '21:00'
+        contest_time += ':00'
         if len(contest_time) != 8 or contest_time[2] != ':':
             log.error('failed to set the contest time')
             log.warning('please type the valid time in the form such as 21:00')
