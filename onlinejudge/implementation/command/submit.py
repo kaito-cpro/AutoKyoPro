@@ -64,13 +64,14 @@ def submit(args: 'argparse.Namespace') -> None:
             idx_EOD += 1
         s = s[:idx_BOD] + s[idx_EOD:]
         # -----------------------------------------------------------
+        # remove DUMP
         idx_EOD = idx_BOD
         while 0 <= idx_EOD < len(s):
             idx_DUMP = s[idx_EOD:].find("DUMP")
             if idx_DUMP == -1:
                 break
             idx_DUMP += idx_EOD
-            idx_EOD = idx_DUMP + 4
+            idx_EOD = idx_DUMP + len('DUMP')
             while idx_EOD < len(s):
                 if s[idx_EOD] == " ":
                     idx_EOD += 1
@@ -79,7 +80,25 @@ def submit(args: 'argparse.Namespace') -> None:
             if idx_EOD == len(s) or s[idx_EOD] != "(":
                 break
             s = s[:idx_DUMP] + "// " + s[idx_DUMP:]
-            idx_EOD = idx_DUMP + 7
+            idx_EOD = idx_DUMP + len('// DUMP')
+        # remove DUMPS
+        idx_EOD = idx_BOD
+        while 0 <= idx_EOD < len(s):
+            idx_DUMP = s[idx_EOD:].find("DUMPS")
+            if idx_DUMP == -1:
+                break
+            idx_DUMP += idx_EOD
+            idx_EOD = idx_DUMP + len('DUMPS')
+            while idx_EOD < len(s):
+                if s[idx_EOD] == " ":
+                    idx_EOD += 1
+                else:
+                    break
+            if idx_EOD == len(s) or s[idx_EOD] != "(":
+                break
+            s = s[:idx_DUMP] + "// " + s[idx_DUMP:]
+            idx_EOD = idx_DUMP + len('// DUMPS')
+        # remove Debug
         idx_EOD = idx_BOD
         while 0 <= idx_EOD < len(s):
             idx_Debug = s[idx_EOD:].find("Debug::")

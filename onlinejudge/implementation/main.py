@@ -256,8 +256,9 @@ def main(args: Optional[List[str]] = None) -> None:
         log.info('see: https://github.com/kmyk/online-judge-tools/blob/master/CONTRIBUTING.md')
         sys.exit(1)
     except Exception as e:
-        log.debug('\n' + traceback.format_exc())
-        log.error(str(e))
+        # 自分で書き換えた箇所
+        # log.debug('\n' + traceback.format_exc())
+        # log.error(str(e))
         sys.exit(1)
 
 
