@@ -57,13 +57,12 @@ def submit(args: 'argparse.Namespace') -> None:
     if idx_BOD != -1:
         idx_EOD = min(s.find("// End of Debug parts") + 30, len(s))
         # -----------------------------------------------------------
-        # マクロを削除する部分
+        # remove class Debug
         while idx_EOD < len(s) and s[idx_EOD] == '-':
             idx_EOD += 1
-        while idx_EOD < len(s) and (s[idx_EOD] == ' ' or s[idx_EOD] == '\n'):
+        while idx_EOD < len(s) and (s[idx_EOD] == ' ' or s[idx_EOD] == '\n' or s[idx_EOD] == '\r'):
             idx_EOD += 1
         s = s[:idx_BOD] + s[idx_EOD:]
-        # -----------------------------------------------------------
         # remove DUMP
         idx_EOD = idx_BOD
         while 0 <= idx_EOD < len(s):
@@ -98,7 +97,7 @@ def submit(args: 'argparse.Namespace') -> None:
                 break
             s = s[:idx_DUMP] + "// " + s[idx_DUMP:]
             idx_EOD = idx_DUMP + len('// DUMPS')
-        # remove Debug
+        # remove Debug::function
         idx_EOD = idx_BOD
         while 0 <= idx_EOD < len(s):
             idx_Debug = s[idx_EOD:].find("Debug::")
@@ -107,6 +106,7 @@ def submit(args: 'argparse.Namespace') -> None:
             idx_Debug += idx_EOD
             s = s[:idx_Debug] + "// " + s[idx_Debug:]
             idx_EOD = idx_Debug + 10
+        # -----------------------------------------------------------
     code = s.encode()
     log.info('code (%d byte):', len(code))
     # 自分で書き換えた箇所(ソースコード表示を消した)
