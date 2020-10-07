@@ -299,11 +299,11 @@ def guess_lang_ids_of_file(filename: pathlib.Path, code: bytes, language_dict, c
         log.debug('lang ids after version filter: %s', lang_ids)
 
         # 自分で書き換えた箇所
-        # AC-Library の include を必要とするか
-        s = code.decode()
-        m = re.search(r'#.*include.*<.*atcoder', s)
-        if m:
-            lang_ids = list(['4101'])  # C++ with ACL
+        # AC-Library の include を必要とするか -> 2020.10.07削除
+        # s = code.decode()
+        # m = re.search(r'#.*include.*<.*atcoder', s)
+        # if m:
+            # lang_ids = list(['4101'])  # C++ with ACL
 
         assert lang_ids
         return lang_ids
