@@ -9,6 +9,7 @@ import sys
 import os
 import pathlib
 import time
+import re
 from typing import *
 if TYPE_CHECKING:
     import argparse
@@ -84,12 +85,22 @@ def test(args: 'argparse.Namespace') -> None:
             if len(outlist_a) == len(outlist_b):
                 flg = False
                 for i in range(len(outlist_a)):
-                    if outlist_a[i].replace('.', '').isdigit() and outlist_b[i].replace('.', '').isdigit():
-                        flg = True
+                    def isnum(s):
+                        ''' 小数点およびマイナスも含めて数字であるか '''
+                        try:
+                            int(s)
+                        except:
+                            return re.fullmatch(r'[-]?[0-9]+[.][0-9]+', s) != None
+                        return True
+
+                    if isnum(outlist_a[i]) and isnum(outlist_b[i]):
                         # b が correct だと想定
+                        if '.' in outlist_b[i]:
+                            flg = True
                         permissible_error = float('1e-6')
                         if not (abs(float(outlist_a[i]) - float(outlist_b[i])) <= permissible_error or abs(float(outlist_a[i]) - float(outlist_b[i])) <= abs(float(outlist_b[i])) * permissible_error):
                             return False
+                # correct の出力例の少なくとも 1 個に小数点が含まれている場合
                 if flg:
                     return True
             return False
