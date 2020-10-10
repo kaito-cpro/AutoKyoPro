@@ -4,14 +4,31 @@ import sys
 import os
 import subprocess
 import datetime
+import re
 
 contest_name = 'abc159' # 暫定
+command_list = ['init', 'info', 'standby', 'login', 'nosub', 'sub']
 
 if __name__ == '__main__':
     args = [] + sys.argv[1:]
+    for i in range(len(args)):
+        cmd = args[i]
+        if cmd not in command_list and re.fullmatch(r'[a-zA-Z][.](cpp|py|awk)', cmd) == None:
+            log.error('invalid comand was called')
+            log.warning(f'please run the valid comand: {command_list}')
+            sys.exit()
+        if cmd == 'nosub' or cmd == 'sub':
+            if i == 0 or re.fullmatch(r'[a-zA-Z][.](cpp|py|awk)', args[i - 1]) == None:
+                log.error('invalid command was called')
+                log.warning(f'\'{cmd}\' takes the file name as an argument')
+                sys.exit()
 
     # 初期化
     if 'init' in args:
+        if len(args) != 1:
+            log.error('invalid argument')
+            log.warning(f'\'init\' takes no argument ({len(args) - 1} given)')
+            sys.exit()
         contest_name = input('contest name: ').upper()
         alternate_url = input('alternate contest url (default: Enter): ')
         if alternate_url == '':
@@ -45,6 +62,10 @@ if __name__ == '__main__':
 
     # AutoKyoPro に登録したコンテスト情報の表示
     if 'info' in args:
+        if len(args) != 1:
+            log.error('invalid argument')
+            log.warning(f'\'info\' takes no argument ({len(args) - 1} given)')
+            sys.exit()
         f = open('onlinejudge/communication.py', 'r')
         info = f.read()
         f.close()
@@ -53,6 +74,10 @@ if __name__ == '__main__':
 
     # コンテスト参加スタンバイ
     if 'standby' in args:
+        if len(args) != 1:
+            log.error('invalid argument')
+            log.warning(f'\'standby\' takes no argument ({len(args) - 1} given)')
+            sys.exit()
         f = open('onlinejudge/communication.py', 'r')
         contest_name = f.readline().split()[0]
         com_url = f.readline().split()[0]
@@ -72,8 +97,8 @@ if __name__ == '__main__':
     # ログイン
     if 'login' in args:
         if len(args) != 1:
-            log.error('failed to login to AtCoder')
-            log.warning('please type just \'login\' as an option')
+            log.error('invalid argument')
+            log.warning(f'\'login\' takes no argument ({len(args) - 1} given)')
             sys.exit()
         onlinejudge.implementation.main.main(args=['login', 'https://atcoder.jp/'])
         sys.exit()
@@ -92,7 +117,7 @@ if __name__ == '__main__':
             com_prob = cmd[0].upper()
             com_lang = 'Awk'
             break
-    if com_prob == None:
+    if com_prob == None or not os.path.exists(com_prob.upper()):
         log.error('failed to develop the process')
         log.warning('please type valid file name')
         sys.exit()
@@ -105,6 +130,16 @@ if __name__ == '__main__':
     f = open('onlinejudge/communication.py', 'w')
     f.writelines([contest_name, ' ', com_prob, ' ', com_lang, '\n', com_url])
     f.close()
+
+    # 強制提出
+    if 'sub' in args:
+        if com_lang == 'C++':
+            onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.cpp'])
+        elif com_lang == 'Python3':
+            onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.py'])
+        elif com_lang == 'Awk':
+            onlinejudge.implementation.main.main(args=['s', contest_url + '_' + com_prob.lower(), com_prob.upper() + '/' + com_prob.lower() + '.awk'])
+        sys.exit()
 
     # サンプルケース取得
     if not os.path.exists(com_prob.upper() + '/test'):
