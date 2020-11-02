@@ -59,10 +59,10 @@ def test(args: 'argparse.Namespace') -> None:
             a = a.replace(chr(13), '')
             b = b.replace(chr(13), '')
             if a == b:
-                return True
+                return 'AC'
             if args.rstrip and a.rstrip(rstrip_targets) == b.rstrip(rstrip_targets):
                 log.warning('WA if no rstrip')
-                return True
+                return 'AC'
 
             # 自分で書き換えた箇所
             # 小数出力の誤差許容
@@ -99,16 +99,16 @@ def test(args: 'argparse.Namespace') -> None:
                             flg = True
                         permissible_error = float('1e-6')
                         if not (abs(float(outlist_a[i]) - float(outlist_b[i])) <= permissible_error or abs(float(outlist_a[i]) - float(outlist_b[i])) <= abs(float(outlist_b[i])) * permissible_error):
-                            return False
-                # correct の出力例の少なくとも 1 個に小数点が含まれている場合
-                if flg:
-                    return True
-            return False
+                            return 'WA'
+                return ['AC_with_error', flg]
+            return 'WA'
 
     rstrip_targets = ' \t\r\n\f\v\0'  # ruby's one, follow AnarchyGolf
     slowest = -1  # type: Union[int, float]
     slowest_name = ''
     ac_count = 0
+    ac_with_error_count = 0
+    error_permission = False
 
     history = []  # type: List[Dict[str, Any]]
     for name, it in sorted(tests.items()):
@@ -153,13 +153,26 @@ def test(args: 'argparse.Namespace') -> None:
                 correct = outf.read()
             # compare
             if args.mode == 'all':
-                if not match(answer, correct):
+                if match(answer, correct) == 'WA':
                     log.failure(log.red('WA'))
                     print_input()
                     if not args.silent:
                         log.emit('output:\n%s', log.bold(answer))
                         log.emit('expected:\n%s', log.bold(correct))
                     result = 'WA'
+                elif match(answer, correct) == ['AC_with_error', True]:
+                    print_input()
+                    if not args.silent:
+                        log.emit('output:\n%s', log.bold(answer))
+                        log.emit('expected:\n%s', log.bold(correct))
+                    result = 'AC_with_error'
+                    error_permission = True
+                elif match(answer, correct) == ['AC_with_error', False]:
+                    print_input()
+                    if not args.silent:
+                        log.emit('output:\n%s', log.bold(answer))
+                        log.emit('expected:\n%s', log.bold(correct))
+                    result = 'AC_with_error'
             elif args.mode == 'line':
                 answer_words  = answer .splitlines()
                 correct_words = correct.splitlines()
@@ -174,7 +187,7 @@ def test(args: 'argparse.Namespace') -> None:
                         print_input()
                         log.failure(log.red('WA') + ': line %d: unexpected line: output "%s"', i + 1, log.bold(x))
                         result = 'WA'
-                    elif not match(x, y):
+                    elif match(x, y) == 'WA':
                         print_input()
                         log.failure(log.red('WA') + ': line %d: output "%s": expected "%s"', i + 1, log.bold(x), log.bold(y))
                         result = 'WA'
@@ -186,6 +199,10 @@ def test(args: 'argparse.Namespace') -> None:
         if result == 'AC':
             log.success(log.green('AC'))
             ac_count += 1
+        elif result == 'AC_with_error':
+            log.success(log.green('AC (with error)'))
+            ac_count += 1
+            ac_with_error_count += 1
 
         # push the result
         testcase = {
@@ -206,7 +223,22 @@ def test(args: 'argparse.Namespace') -> None:
     log.emit('')
     log.status('slowest: %f sec  (for %s)', slowest, slowest_name)
     if ac_count == len(tests):
-        log.success('test ' + log.green('success') + ': %d cases', len(tests))
+        # 自分で書き換えた箇所
+        if ac_with_error_count > 0:
+            if error_permission == True:
+                log.success('test ' + log.green('success (with error)') + ': %d cases', len(tests))
+            else:
+                log.failure('test ' + log.green('success (with error)') + ': %d cases', len(tests))
+                log.error('your answer has error while correct answer has no error')
+                log.warning('please remove error from your answer')
+                f = open('onlinejudge/communication.py', 'r')
+                com_prev = f.readlines()
+                f.close()
+                f = open('onlinejudge/communication.py', 'w')
+                f.writelines([' '.join(com_prev[0].split())] + [' ', 'WA', '\n'] + com_prev[1].split())
+                f.close()
+        else:
+            log.success('test ' + log.green('success') + ': %d cases', len(tests))
         # 自分で書き換えた箇所
         f = open('onlinejudge/communication.py', 'r')
         com_prev = f.readlines()
