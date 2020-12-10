@@ -100,6 +100,8 @@ def test(args: 'argparse.Namespace') -> None:
                         permissible_error = float('1e-6')
                         if not (abs(float(outlist_a[i]) - float(outlist_b[i])) <= permissible_error or abs(float(outlist_a[i]) - float(outlist_b[i])) <= abs(float(outlist_b[i])) * permissible_error):
                             return 'WA'
+                    else:
+                        return 'WA'
                 return ['AC_with_error', flg]
             return 'WA'
 
