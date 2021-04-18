@@ -142,18 +142,18 @@ def submit(args: 'argparse.Namespace') -> None:
             if guessed_unmatch:
                 problem_id = problem.get_url().rstrip('/').split('/')[-1].split('?')[-1]  # this is too ad-hoc
                 key = problem_id[: 3] + (problem_id[-1] if len(problem_id) >= 4 else '')
-                sys.stdout.write('Are you sure? Please type "{}" '.format(key))
-                sys.stdout.flush()
                 # 自分で書き換えた箇所
+                # sys.stdout.write('Are you sure? Please type "{}" '.format(key))
+                # sys.stdout.flush()
                 # c = sys.stdin.readline().rstrip()
                 c = key
                 if c != key:
                     log.info('terminated.')
                     return
             else:
-                sys.stdout.write('Are you sure? [y/N] ')
-                sys.stdout.flush()
                 # 自分で書き換えた箇所
+                # sys.stdout.write('Are you sure? [y/N] ')
+                # sys.stdout.flush()
                 # c = sys.stdin.read(1)
                 c = 'y'
                 if c.lower() != 'y':

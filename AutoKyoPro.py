@@ -14,20 +14,20 @@ if __name__ == '__main__':
     for i in range(len(args)):
         cmd = args[i]
         if cmd not in command_list and re.fullmatch(r'[a-zA-Z][.](cpp|py|awk)', cmd) == None:
-            log.error('invalid comand was called')
-            log.warning(f'please run the valid comand: {command_list}')
+            log.faster_error('invalid comand was called')
+            log.faster_warning(f'please run the valid comand: {command_list}')
             sys.exit()
         if cmd == 'nosub' or cmd == 'sub':
             if i == 0 or re.fullmatch(r'[a-zA-Z][.](cpp|py|awk)', args[i - 1]) == None:
-                log.error('invalid command was called')
-                log.warning(f'\'{cmd}\' takes the file name as an argument')
+                log.faster_error('invalid command was called')
+                log.faster_warning(f'\'{cmd}\' takes the file name as an argument')
                 sys.exit()
 
     # 初期化
     if 'init' in args:
         if len(args) != 1:
-            log.error('invalid argument')
-            log.warning(f'\'init\' takes no argument ({len(args) - 1} given)')
+            log.faster_error('invalid argument')
+            log.faster_warning(f'\'init\' takes no argument ({len(args) - 1} given)')
             sys.exit()
         contest_name = input('contest name: ').upper()
         alternate_url = input('alternate contest url (default: Enter): ')
@@ -40,8 +40,8 @@ if __name__ == '__main__':
         if problem_num == '':
             problem_num = 'F'
         if not 'A' <= problem_num <= 'Z':
-            log.error('failed to set the number of problems')
-            log.warning('please type the valid alphabet from \'A\' to \'Z\'')
+            log.faster_error('failed to set the number of problems')
+            log.faster_warning('please type the valid alphabet from \'A\' to \'Z\'')
             sys.exit()
         problem_list = [chr(num) for num in range(ord('A'), ord(problem_num.upper()) + 1)]
         for c in [chr(num) for num in range(ord('A'), ord('Z') + 1)]:
@@ -63,8 +63,8 @@ if __name__ == '__main__':
     # AutoKyoPro に登録したコンテスト情報の表示
     if 'info' in args:
         if len(args) != 1:
-            log.error('invalid argument')
-            log.warning(f'\'info\' takes no argument ({len(args) - 1} given)')
+            log.faster_error('invalid argument')
+            log.faster_warning(f'\'info\' takes no argument ({len(args) - 1} given)')
             sys.exit()
         f = open('onlinejudge/communication.py', 'r')
         info = f.read()
@@ -75,8 +75,8 @@ if __name__ == '__main__':
     # コンテスト参加スタンバイ
     if 'standby' in args:
         if len(args) != 1:
-            log.error('invalid argument')
-            log.warning(f'\'standby\' takes no argument ({len(args) - 1} given)')
+            log.faster_error('invalid argument')
+            log.faster_warning(f'\'standby\' takes no argument ({len(args) - 1} given)')
             sys.exit()
         f = open('onlinejudge/communication.py', 'r')
         contest_name = f.readline().split()[0]
@@ -88,8 +88,8 @@ if __name__ == '__main__':
             contest_time = '21:00'
         contest_time += ':00'
         if len(contest_time) != 8 or contest_time[2] != ':':
-            log.error('failed to set the contest time')
-            log.warning('please type the valid time in the form such as 21:00')
+            log.faster_error('failed to set the contest time')
+            log.faster_warning('please type the valid time in the form such as 21:00')
             sys.exit()
         onlinejudge.implementation.main.main(args=['standby', contest_url, contest_time])
         sys.exit()
@@ -97,8 +97,8 @@ if __name__ == '__main__':
     # ログイン
     if 'login' in args:
         if len(args) != 1:
-            log.error('invalid argument')
-            log.warning(f'\'login\' takes no argument ({len(args) - 1} given)')
+            log.faster_error('invalid argument')
+            log.faster_warning(f'\'login\' takes no argument ({len(args) - 1} given)')
             sys.exit()
         onlinejudge.implementation.main.main(args=['login', 'https://atcoder.jp/'])
         sys.exit()
@@ -118,8 +118,8 @@ if __name__ == '__main__':
             com_lang = 'Awk'
             break
     if com_prob == None or not os.path.exists(com_prob.upper()):
-        log.error('failed to develop the process')
-        log.warning('please type valid file name')
+        log.faster_error('failed to develop the process')
+        log.faster_warning('please type valid file name')
         sys.exit()
 
     f = open('onlinejudge/communication.py', 'r')

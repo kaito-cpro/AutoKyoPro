@@ -19,7 +19,7 @@ def compare_as_floats(xs_: str, ys_: str, error: float) -> bool:
         try:
             y = float(x)
             if not math.isfinite(y):
-                log.warning('not an real number found: %f', y)
+                faster_warning('not an real number found: %f', y)
             return y
         except ValueError:
             return x
@@ -61,7 +61,7 @@ def test(args: 'argparse.Namespace') -> None:
             if a == b:
                 return 'AC'
             if args.rstrip and a.rstrip(rstrip_targets) == b.rstrip(rstrip_targets):
-                log.warning('WA if no rstrip')
+                faster_warning('WA if no rstrip')
                 return 'AC'
 
             # 自分で書き換えた箇所
@@ -113,17 +113,23 @@ def test(args: 'argparse.Namespace') -> None:
     error_permission = False
 
     history = []  # type: List[Dict[str, Any]]
+    tested_cases = []  # 自分で書き換えた箇所
     for name, it in sorted(tests.items()):
+        if name in tested_cases:
+            continue
+        else:
+            tested_cases.append(name)
+            
         is_printed_input = not args.print_input
         def print_input():
             nonlocal is_printed_input
             if not is_printed_input:
                 is_printed_input = True
                 with open(it['in']) as inf:
-                    log.emit('input:\n%s', log.bold(inf.read()))
+                    log.faster_emit('input:\n%s', log.bold(inf.read()))
 
-        log.emit('')
-        log.info('%s', name)
+        log.faster_emit('')
+        log.faster_info('%s', name)
 
         # run the binary
         with it['in'].open() as inf:
@@ -135,17 +141,17 @@ def test(args: 'argparse.Namespace') -> None:
             if slowest < elapsed:
                 slowest = elapsed
                 slowest_name = name
-            log.status('time: %f sec', elapsed)
+            log.faster_status('time: %f sec', elapsed)
             proc.terminate()
 
         # check TLE, RE or not
         result = 'AC'
         if proc.returncode is None:
-            log.failure(log.red('TLE'))
+            log.faster_failure(log.red('TLE'))
             result = 'TLE'
             print_input()
         elif proc.returncode != 0:
-            log.failure(log.red('RE') + ': return code %d', proc.returncode)
+            log.faster_failure(log.red('RE') + ': return code %d', proc.returncode)
             result = 'RE'
             print_input()
 
@@ -156,24 +162,24 @@ def test(args: 'argparse.Namespace') -> None:
             # compare
             if args.mode == 'all':
                 if match(answer, correct) == 'WA':
-                    log.failure(log.red('WA'))
+                    log.faster_failure(log.red('WA'))
                     print_input()
                     if not args.silent:
-                        log.emit('output:\n%s', log.bold(answer))
-                        log.emit('expected:\n%s', log.bold(correct))
+                        log.faster_emit('output:\n%s', log.bold(answer))
+                        log.faster_emit('expected:\n%s', log.bold(correct))
                     result = 'WA'
                 elif match(answer, correct) == ['AC_with_error', True]:
                     print_input()
                     if not args.silent:
-                        log.emit('output:\n%s', log.bold(answer))
-                        log.emit('expected:\n%s', log.bold(correct))
+                        log.faster_emit('output:\n%s', log.bold(answer))
+                        log.faster_emit('expected:\n%s', log.bold(correct))
                     result = 'AC_with_error'
                     error_permission = True
                 elif match(answer, correct) == ['AC_with_error', False]:
                     print_input()
                     if not args.silent:
-                        log.emit('output:\n%s', log.bold(answer))
-                        log.emit('expected:\n%s', log.bold(correct))
+                        log.faster_emit('output:\n%s', log.bold(answer))
+                        log.faster_emit('expected:\n%s', log.bold(correct))
                     result = 'AC_with_error'
             elif args.mode == 'line':
                 answer_words  = answer .splitlines()
@@ -183,26 +189,26 @@ def test(args: 'argparse.Namespace') -> None:
                         break
                     elif x is None:
                         print_input()
-                        log.failure(log.red('WA') + ': line %d: line is nothing: expected "%s"', i + 1, log.bold(y))
+                        log.faster_failure(log.red('WA') + ': line %d: line is nothing: expected "%s"', i + 1, log.bold(y))
                         result = 'WA'
                     elif y is None:
                         print_input()
-                        log.failure(log.red('WA') + ': line %d: unexpected line: output "%s"', i + 1, log.bold(x))
+                        log.faster_failure(log.red('WA') + ': line %d: unexpected line: output "%s"', i + 1, log.bold(x))
                         result = 'WA'
                     elif match(x, y) == 'WA':
                         print_input()
-                        log.failure(log.red('WA') + ': line %d: output "%s": expected "%s"', i + 1, log.bold(x), log.bold(y))
+                        log.faster_failure(log.red('WA') + ': line %d: output "%s": expected "%s"', i + 1, log.bold(x), log.bold(y))
                         result = 'WA'
             else:
                 assert False
         else:
             if not args.silent:
-                log.emit(log.bold(answer))
+                log.faster_emit(log.bold(answer))
         if result == 'AC':
-            log.success(log.green('AC'))
+            log.faster_success(log.green('AC'))
             ac_count += 1
         elif result == 'AC_with_error':
-            log.success(log.green('AC (with error)'))
+            log.faster_success(log.green('AC (with error)'))
             ac_count += 1
             ac_with_error_count += 1
 
@@ -222,17 +228,17 @@ def test(args: 'argparse.Namespace') -> None:
         } ]
 
     # summarize
-    log.emit('')
-    log.status('slowest: %f sec  (for %s)', slowest, slowest_name)
+    log.faster_emit('')
+    log.faster_status('slowest: %f sec  (for %s)', slowest, slowest_name)
     if ac_count == len(tests):
         # 自分で書き換えた箇所
         if ac_with_error_count > 0:
             if error_permission == True:
-                log.success('test ' + log.green('success (with error)') + ': %d cases', len(tests))
+                log.faster_success('test ' + log.green('success (with error)') + ': %d cases', len(tests))
             else:
-                log.failure('test ' + log.green('success (with error)') + ': %d cases', len(tests))
-                log.error('your answer has error while correct answer has no error')
-                log.warning('please remove error from your answer')
+                log.faster_failure('test ' + log.green('success (with error)') + ': %d cases', len(tests))
+                log.faster_error('your answer has error while correct answer has no error')
+                log.faster_warning('please remove error from your answer')
                 f = open('onlinejudge/communication.py', 'r')
                 com_prev = f.readlines()
                 f.close()
@@ -240,7 +246,7 @@ def test(args: 'argparse.Namespace') -> None:
                 f.writelines([' '.join(com_prev[0].split())] + [' ', 'WA', '\n'] + com_prev[1].split())
                 f.close()
         else:
-            log.success('test ' + log.green('success') + ': %d cases', len(tests))
+            log.faster_success('test ' + log.green('success') + ': %d cases', len(tests))
         # 自分で書き換えた箇所
         f = open('onlinejudge/communication.py', 'r')
         com_prev = f.readlines()
@@ -249,7 +255,7 @@ def test(args: 'argparse.Namespace') -> None:
         f.writelines([' '.join(com_prev[0].split())] + [' ', 'AC', '\n'] + com_prev[1].split())
         f.close()
     else:
-        log.failure('test ' + log.red('failed') + ': %d AC / %d cases', ac_count, len(tests))
+        log.faster_failure('test ' + log.red('failed') + ': %d AC / %d cases', ac_count, len(tests))
         # 自分で書き換えた箇所
         f = open('onlinejudge/communication.py', 'r')
         com_prev = f.readlines()

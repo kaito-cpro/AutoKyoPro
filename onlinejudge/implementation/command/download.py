@@ -54,8 +54,8 @@ def download(args: 'argparse.Namespace') -> None:
 
     # write samples to files
     for i, sample in enumerate(samples):
-        log.emit('')
-        log.info('sample %d', i)
+        log.faster_emit('')
+        log.faster_info('sample %d', i)
         for kind in [ 'input', 'output' ]:
             ext = kind[: -3]
             data = getattr(sample, kind).data
@@ -67,19 +67,19 @@ def download(args: 'argparse.Namespace') -> None:
             table['b'] = os.path.basename(name)
             table['d'] = os.path.dirname(name)
             path = args.directory / utils.percentformat(args.format, table)  # type: pathlib.Path
-            log.status('%sput: %s', ext, name)
-            log.emit(colorama.Style.BRIGHT + data.rstrip() + colorama.Style.RESET_ALL)
+            log.faster_status('%sput: %s', ext, name)
+            log.faster_emit(colorama.Style.BRIGHT + data.rstrip() + colorama.Style.RESET_ALL)
             if args.dry_run:
                 continue
             if path.exists():
-                log.warning('file already exists: %s', path)
+                log.faster_warning('file already exists: %s', path)
                 if not args.overwrite:
-                    log.warning('skipped')
+                    log.faster_warning('skipped')
                     continue
             path.parent.mkdir(parents=True, exist_ok=True)
             with path.open('w') as fh:
                 fh.write(data)
-            log.success('saved to: %s', path)
+            log.faster_success('saved to: %s', path)
 
     # print json
     if args.json:
