@@ -40,7 +40,7 @@ def success(s: str, *args) -> None:
     # logger.info(prefix['success'] + str(s), *args)
     detatch_handler()
 def failure(s: str, *args) -> None:
-    # logger.info(prefix['failure'] + str(s), *args)
+    logger.info(prefix['failure'] + str(s), *args)
     detatch_handler()
 def debug(s: str, *args) -> None:
     # logger.debug(prefix['debug'] + str(s), *args)
@@ -52,13 +52,13 @@ def warning(s: str, *args) -> None:
     # logger.warning(prefix['warning'] + str(s), *args)
     detatch_handler()
 def error(s: str, *args) -> None:
-    # logger.error(prefix['error'] + str(s), *args)
+    logger.error(prefix['error'] + str(s), *args)
     detatch_handler()
 def exception(s: str, *args) -> None:
-    # logger.error(prefix['exception'] + str(s), *args)
+    logger.error(prefix['exception'] + str(s), *args)
     detatch_handler()
 def critical(s: str, *args) -> None:
-    # logger.critical(prefix['critical'] + str(s), *args)
+    logger.critical(prefix['critical'] + str(s), *args)
     detatch_handler()
 
 # 高速化用
