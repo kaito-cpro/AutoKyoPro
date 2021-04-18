@@ -25,57 +25,72 @@ prefix = {
     'critical'     : '[' + Fore.RED     +                'CRITICAL' + Style.RESET_ALL + '] ',
 }
 
+# 自分で書き換えた箇所
+def detatch_handler():
+    if len(logger.handlers) > 1:
+        logger.handlers.pop()
+
 def emit(s: str, *args) -> None:
     # logger.info(str(s), *args)
-    pass
+    detatch_handler()
 def status(s: str, *args) -> None:
     # logger.info(prefix['status'] + str(s), *args)
-    pass
+    detatch_handler()
 def success(s: str, *args) -> None:
     # logger.info(prefix['success'] + str(s), *args)
-    pass
+    detatch_handler()
 def failure(s: str, *args) -> None:
     # logger.info(prefix['failure'] + str(s), *args)
-    pass
+    detatch_handler()
 def debug(s: str, *args) -> None:
     # logger.debug(prefix['debug'] + str(s), *args)
-    pass
+    detatch_handler()
 def info(s: str, *args) -> None:
     # logger.info(prefix['info'] + str(s), *args)
-    pass
+    detatch_handler()
 def warning(s: str, *args) -> None:
     # logger.warning(prefix['warning'] + str(s), *args)
-    pass
+    detatch_handler()
 def error(s: str, *args) -> None:
     # logger.error(prefix['error'] + str(s), *args)
-    pass
+    detatch_handler()
 def exception(s: str, *args) -> None:
     # logger.error(prefix['exception'] + str(s), *args)
-    pass
+    detatch_handler()
 def critical(s: str, *args) -> None:
     # logger.critical(prefix['critical'] + str(s), *args)
-    pass
+    detatch_handler()
 
 # 高速化用
 def faster_emit(s: str, *args) -> None:
+    detatch_handler()
     logger.info(str(s), *args)
 def faster_status(s: str, *args) -> None:
+    detatch_handler()
     logger.info(prefix['status'] + str(s), *args)
 def faster_success(s: str, *args) -> None:
+    detatch_handler()
     logger.info(prefix['success'] + str(s), *args)
 def faster_failure(s: str, *args) -> None:
+    detatch_handler()
     logger.info(prefix['failure'] + str(s), *args)
 def faster_debug(s: str, *args) -> None:
+    detatch_handler()
     logger.debug(prefix['debug'] + str(s), *args)
 def faster_info(s: str, *args) -> None:
+    detatch_handler()
     logger.info(prefix['info'] + str(s), *args)
 def faster_warning(s: str, *args) -> None:
+    detatch_handler()
     logger.warning(prefix['warning'] + str(s), *args)
 def faster_error(s: str, *args) -> None:
+    detatch_handler()
     logger.error(prefix['error'] + str(s), *args)
 def faster_exception(s: str, *args) -> None:
+    detatch_handler()
     logger.error(prefix['exception'] + str(s), *args)
 def faster_critical(s: str, *args) -> None:
+    detatch_handler()
     logger.critical(prefix['critical'] + str(s), *args)
 
 bold = lambda s: colorama.Style.BRIGHT + s + colorama.Style.RESET_ALL

@@ -113,13 +113,7 @@ def test(args: 'argparse.Namespace') -> None:
     error_permission = False
 
     history = []  # type: List[Dict[str, Any]]
-    tested_cases = []  # 自分で書き換えた箇所
     for name, it in sorted(tests.items()):
-        if name in tested_cases:
-            continue
-        else:
-            tested_cases.append(name)
-            
         is_printed_input = not args.print_input
         def print_input():
             nonlocal is_printed_input

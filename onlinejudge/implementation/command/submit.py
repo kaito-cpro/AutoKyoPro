@@ -138,6 +138,8 @@ def submit(args: 'argparse.Namespace') -> None:
             log.status('sleep(%.2f)', args.wait)
             # 自分で書き換えた箇所
             # time.sleep(args.wait)
+        log.faster_emit('')
+        log.faster_info('now submitting...')
         if not args.yes:
             if guessed_unmatch:
                 problem_id = problem.get_url().rstrip('/').split('/')[-1].split('?')[-1]  # this is too ad-hoc
