@@ -19,7 +19,7 @@ def compare_as_floats(xs_: str, ys_: str, error: float) -> bool:
         try:
             y = float(x)
             if not math.isfinite(y):
-                faster_warning('not an real number found: %f', y)
+                log.faster_warning('not an real number found: %f', y)
             return y
         except ValueError:
             return x
@@ -61,7 +61,7 @@ def test(args: 'argparse.Namespace') -> None:
             if a == b:
                 return 'AC'
             if args.rstrip and a.rstrip(rstrip_targets) == b.rstrip(rstrip_targets):
-                faster_warning('WA if no rstrip')
+                log.faster_warning('WA if no rstrip')
                 return 'AC'
 
             # 自分で書き換えた箇所
