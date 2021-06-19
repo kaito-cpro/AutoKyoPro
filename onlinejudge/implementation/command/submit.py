@@ -63,10 +63,10 @@ def submit(args: 'argparse.Namespace') -> None:
         while idx_EOD < len(s) and (s[idx_EOD] == ' ' or s[idx_EOD] == '\n' or s[idx_EOD] == '\r'):
             idx_EOD += 1
         s = s[:idx_BOD] + s[idx_EOD:]
-    # remove DUMP
-    s = re.sub(r'(DUMP\s*[(])', r'// \1', s, flags=re.MULTILINE)
-    # remove DUMPS
-    s = re.sub(r'(DUMPS\s*[(])', r'// \1', s, flags=re.MULTILINE)
+    # remove debug
+    s = re.sub(r'(debug\s*[(])', r'// \1', s, flags=re.MULTILINE)
+    # remove debugs
+    s = re.sub(r'(debugs\s*[(])', r'// \1', s, flags=re.MULTILINE)
     # remove Debug::function
     s = re.sub(r'(Debug\s*::\s*.*[(])', r'// \1', s, flags=re.MULTILINE)
     # -----------------------------------------------------------
