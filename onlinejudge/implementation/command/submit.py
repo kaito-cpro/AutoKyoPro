@@ -69,6 +69,8 @@ def submit(args: 'argparse.Namespace') -> None:
     s = re.sub(r'(debugs\s*[(])', r'// \1', s, flags=re.MULTILINE)
     # remove Debug::function
     s = re.sub(r'(Debug\s*::\s*.*[(])', r'// \1', s, flags=re.MULTILINE)
+    # remove include of debug
+    s = re.sub(r'(#include\s*<debug.hpp>)', r'// \1', s, flags=re.MULTILINE)
     # -----------------------------------------------------------
     code = s.encode()
     log.info('code (%d byte):', len(code))
