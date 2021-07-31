@@ -36,9 +36,9 @@ if __name__ == '__main__':
         f = open('onlinejudge/communication.py', 'w')
         f.writelines([contest_name, '\n', alternate_url])
         f.close()
-        problem_num = input('number of problems (default F: Enter): ')
+        problem_num = input('number of problems (default H: Enter): ')
         if problem_num == '':
-            problem_num = 'F'
+            problem_num = 'H'
         if not 'A' <= problem_num <= 'Z':
             log.faster_error('failed to set the number of problems')
             log.faster_warning('please type the valid alphabet from \'A\' to \'Z\'')
